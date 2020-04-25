@@ -14,11 +14,27 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from blog.views import BlogListView, BlogDetailView
+from django.urls import path, include
+from blog.views import BlogListView, BlogDetailView, BlogCreateView, BlogUpdateView, BlogDeleteView
+from accounts.views import SignUpView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+	
+	#Accounts Views
+	path('accounts/', include('django.contrib.auth.urls')),
+	path('accounts/signup/', SignUpView.as_view(), name='signup'),
+
+    #The order of our urls matters here because Django reads this file top-to-bottom.
+	#Therefore when we request them /accounts/signup url, Django will first look in auth,
+	#not find it, and then proceed to the accounts app.
+
+    #Blog Views
     path('',BlogListView.as_view(), name= 'home'),
     path('post/<int:pk>/', BlogDetailView.as_view(), name='post_detail'),
+    path('post/new/', BlogCreateView.as_view(), name='post_new'),
+    path('post/<int:pk>/edit/',  BlogUpdateView.as_view(), name='post_edit'),
+    path('post/<int:pk>/delete/',  BlogDeleteView.as_view(), name='post_delete'),
+
 ]
